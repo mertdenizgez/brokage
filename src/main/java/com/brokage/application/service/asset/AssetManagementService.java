@@ -10,25 +10,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-
 @Service
 @RequiredArgsConstructor
 public class AssetManagementService {
-    
+
     private final AssetRepository assetRepository;
-    
+
     @Transactional
     public Asset getOrCreateAsset(Long customerId, String assetName) {
-        return assetRepository.findByCustomerIdAndAssetName(customerId, assetName)
+        return assetRepository.findByCustomerIdAndAssetNameForUpdate(customerId, assetName)
                 .orElseGet(() -> createAsset(customerId, assetName));
     }
-    
+
     @Transactional
     public Asset getAssetForUpdate(Long customerId, String assetName) {
         return assetRepository.findByCustomerIdAndAssetNameForUpdate(customerId, assetName)
                 .orElseThrow(() -> new IllegalArgumentException("Asset not found"));
     }
-    
+
     private Asset createAsset(Long customerId, String assetName) {
         Asset asset = new Asset();
         asset.setCustomerId(customerId);

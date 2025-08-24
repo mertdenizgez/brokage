@@ -42,18 +42,18 @@ class AssetManagementServiceTest {
 
     @Test
     void getOrCreateAsset_ExistingAsset_ReturnsExisting() {
-        when(assetRepository.findByCustomerIdAndAssetName(1L, "TRY")).thenReturn(Optional.of(tryAsset));
+        when(assetRepository.findByCustomerIdAndAssetNameForUpdate(1L, "TRY")).thenReturn(Optional.of(tryAsset));
 
         Asset result = assetManagementService.getOrCreateAsset(1L, "TRY");
 
         assertEquals(tryAsset, result);
-        verify(assetRepository).findByCustomerIdAndAssetName(1L, "TRY");
+        verify(assetRepository).findByCustomerIdAndAssetNameForUpdate(1L, "TRY");
         verify(assetRepository, never()).save(any(Asset.class));
     }
 
     @Test
     void getOrCreateAsset_NewAsset_CreatesNew() {
-        when(assetRepository.findByCustomerIdAndAssetName(1L, "GOOGL")).thenReturn(Optional.empty());
+        when(assetRepository.findByCustomerIdAndAssetNameForUpdate(1L, "GOOGL")).thenReturn(Optional.empty());
         when(assetRepository.save(any(Asset.class))).thenAnswer(invocation -> {
             Asset asset = invocation.getArgument(0);
             asset.setId(3L);
@@ -85,7 +85,7 @@ class AssetManagementServiceTest {
         when(assetRepository.findByCustomerIdAndAssetNameForUpdate(1L, "NONEXISTENT"))
                 .thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, 
+        assertThrows(IllegalArgumentException.class,
                 () -> assetManagementService.getAssetForUpdate(1L, "NONEXISTENT"));
     }
 }
